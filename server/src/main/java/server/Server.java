@@ -14,7 +14,7 @@ public class Server {
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         server.delete("db", ctx -> ctx.result("{}"));
-        server.post("user", ctx -> register(ctx));
+        server.post("user", this::register);
 
     }
 
