@@ -7,8 +7,6 @@ import io.javalin.*;
 import io.javalin.http.Context;
 import service.UserService;
 
-import java.util.Map;
-
 public class Server {
 
     private final Javalin server;
@@ -20,7 +18,7 @@ public class Server {
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
-        server.delete("db", ctx -> ctx.result("{}"));
+        server.delete("db", ctx -> userService.clear());
         server.post("user", this::register);
 
     }
