@@ -1,16 +1,23 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.MemoryDataAccess;
+import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.Context;
+import service.UserService;
 
 import java.util.Map;
 
 public class Server {
 
     private final Javalin server;
+    private final UserService userService;
 
     public Server() {
+        var dataAccess = new MemoryDataAccess();
+        userService = new UserService(dataAccess);
+
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         server.delete("db", ctx -> ctx.result("{}"));
@@ -19,15 +26,18 @@ public class Server {
     }
 
     private void register(Context ctx) {
-        var serializer = new Gson();
-        String reqJson = ctx.body();
-        var req = serializer.fromJson(reqJson, Map.class);
+        try {
+            var serializer = new Gson();
+            String reqJson = ctx.body();
+            var user = serializer.fromJson(reqJson, UserData.class);
 
-        // call to the service and register
+            var authData = userService.register(user);
 
-        var res = Map.of("username", req.get("username"), "authToken", "yzx");
-        ctx.result(serializer.toJson(res));
-
+            ctx.result(serializer.toJson(authData));
+        } catch (Exception ex) {
+            var msg = String.format("{ \"message\": \"Error: %s\" }", ex.getMessage());
+            ctx.status(403).result(msg);
+        }
     }
 
     public int run(int desiredPort) {
