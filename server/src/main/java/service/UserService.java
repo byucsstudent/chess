@@ -15,6 +15,9 @@ public class UserService {
     }
 
     public AuthData register(UserData user) throws Exception {
+        if (user.username() == null || user.username().isBlank()) {
+            throw new Exception("invalid username");
+        }
         if (dataAccess.getUser(user.username()) != null) {
             throw new Exception("already exists");
         }
