@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DataAccessTest {
 
     @Test
-    void clear() {
+    void clear() throws Exception {
         DataAccess db = new MemoryDataAccess();
         db.createUser(new UserData("joe", "j@j.com", "toomanysecrets"));
         db.clear();
@@ -16,7 +16,7 @@ class DataAccessTest {
     }
 
     @Test
-    void createUser() {
+    void createUser() throws Exception {
         DataAccess db = new MemoryDataAccess();
         var user = new UserData("joe", "j@j.com", "toomanysecrets");
         db.createUser(user);
